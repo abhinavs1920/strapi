@@ -25,21 +25,13 @@ function sanitizeStage({ strapi }: { strapi: Core.Strapi }, userAbility: unknown
   return (entity: unknown) => permissionChecker.sanitizeOutput(entity);
 }
 
-/**
- * Converts the query string populate (`'*'`, `'a,b'`, `['a']`, `{ a: 'true' }`) into the shape
- * the database query accepts. A populate it cannot convert throws a ValidationError (400).
- */
-function convertPopulate({ strapi }: { strapi: Core.Strapi }, populate: unknown) {
-  return strapi.get('query-params').transform(STAGE_MODEL_UID, { populate }).populate;
-}
-
 export default {
   /**
    * List all stages
    */
   async find(ctx: Context) {
     const { workflow_id: workflowId } = ctx.params;
-    const populate = convertPopulate({ strapi }, ctx.query.populate);
+    const { populate } = ctx.query;
     const stagesService = getService('stages');
     const sanitizer = sanitizeStage({ strapi }, ctx.state.userAbility);
 
@@ -57,7 +49,7 @@ export default {
    */
   async findById(ctx: Context) {
     const { id, workflow_id: workflowId } = ctx.params;
-    const populate = convertPopulate({ strapi }, ctx.query.populate);
+    const { populate } = ctx.query;
     const stagesService = getService('stages');
     const sanitizer = sanitizeStage({ strapi }, ctx.state.userAbility);
 
